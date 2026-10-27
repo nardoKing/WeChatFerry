@@ -1,6 +1,6 @@
 name: Build WeChatFerry v39.2.4
 on:
-  workflow_dispatch: # 只能手动点击运行，不会自动触发
+  workflow_dispatch:
 
 jobs:
   build:
@@ -14,9 +14,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup vcpkg
-        uses: microsoft/vcpkg-tool@v0.0.14
-        with:
-          vcpkg-version: latest
+        uses: microsoft/vcpkg-setup@v1
 
       - name: Install dependencies
         run: |
