@@ -1,0 +1,39 @@
+name: Build WeChatFerry v39.2.4
+on:
+  workflow_dispatch: # 只能手动点击运行，不会自动触发
+
+jobs:
+  build:
+    runs-on: windows-2022
+    steps:
+      - name: Checkout source & submodules
+        uses: actions/checkout@v4
+        with:
+          ref: bbbaeb5
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Setup vcpkg
+        uses: microsoft/vcpkg-tool@v0.0.14
+        with:
+          vcpkg-version: latest
+
+      - name: Install dependencies
+        run: |
+          vcpkg integrate install
+          vcpkg install spdlog:x64-windows-static nng:x64-windows-static protobuf:x64-windows-static
+        shell: pwsh
+
+      - name: MSBuild Release x64
+        run: |
+          msbuild WeChatFerry.sln /p:Configuration=Release /p:Platform=x64 /m
+        shell: pwsh
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: wcf-v39.2.4-bbbaeb5
+          path: |
+            WeChatFerry/Out/x64/Release/wcf.exe
+            WeChatFerry/Out/x64/Release/wcf.dll
+          retention-days: 30
