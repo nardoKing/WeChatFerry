@@ -6,10 +6,11 @@ jobs:
   build:
     runs-on: windows-2022
     steps:
-      - name: Checkout source & submodules
+      - name: Checkout upstream WeChatFerry v39.2.4
         uses: actions/checkout@v4
         with:
-          ref: bbbaeb5
+          repository: lich0821/WeChatFerry
+          ref: v39.2.4
           submodules: recursive
           fetch-depth: 0
 
@@ -36,7 +37,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: wcf-v39.2.4-bbbaeb5
+          name: wcf-v39.2.4
           path: |
             WeChatFerry/Out/x64/Release/wcf.exe
             WeChatFerry/Out/x64/Release/wcf.dll
