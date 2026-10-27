@@ -13,18 +13,24 @@ jobs:
           submodules: recursive
           fetch-depth: 0
 
-      - name: Setup vcpkg
-        uses: microsoft/vcpkg-setup@v1
+      - name: Clone vcpkg
+        run: git clone https://github.com/microsoft/vcpkg
+        shell: pwsh
 
-      - name: Install dependencies
-        run: |
-          vcpkg integrate install
-          vcpkg install spdlog:x64-windows-static nng:x64-windows-static protobuf:x64-windows-static
+      - name: Bootstrap vcpkg
+        run: .\vcpkg\bootstrap-vcpkg.bat
+        shell: pwsh
+
+      - name: Install deps
+        run: .\vcpkg\vcpkg install spdlog:x64-windows-static nng:x64-windows-static protobuf:x64-windows-static
+        shell: pwsh
+
+      - name: Integrate vcpkg
+        run: .\vcpkg\vcpkg integrate install
         shell: pwsh
 
       - name: MSBuild Release x64
-        run: |
-          msbuild WeChatFerry.sln /p:Configuration=Release /p:Platform=x64 /m
+        run: msbuild WeChatFerry.sln /p:Configuration=Release /p:Platform=x64 /m
         shell: pwsh
 
       - name: Upload artifacts
