@@ -6,14 +6,13 @@ jobs:
   build:
     runs-on: windows-2022
     steps:
-      - name: Checkout upstream WeChatFerry v39.2.4
-        uses: actions/checkout@v4
+      - name: Checkout source & submodules
+        uses: actions/checkout@v5
         with:
-          repository: lich0821/WeChatFerry
-          ref: v39.2.4
+          ref: bbbaeb5
+          submodules: recursive
           fetch-depth: 0
-          # 删掉 submodules: recursive！不再拉取子模块，避开失效的 wcferry-node
-          
+
       - name: Clone vcpkg
         run: git clone --depth=1 https://github.com/microsoft/vcpkg ${{ github.workspace }}\vcpkg
         shell: pwsh
@@ -31,14 +30,13 @@ jobs:
         shell: pwsh
 
       - name: MSBuild Release x64
-        run: msbuild WeChatFerry/WeChatFerry.sln /p:Configuration=Release /p:Platform=x64 /m
+        run: |
+          "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\Launch-VsDevShell.ps1" -SkipAutomaticLocation
+          msbuild WeChatFerry/WeChatFerry.sln /p:Configuration=Release /p:Platform=x64 /m
         shell: pwsh
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: wcf-v39.2.4
-          path: |
-            WeChatFerry/Out/x64/Release/wcf.exe
-            WeChatFerry/Out/x64/Release/wcf.dll
-          retention-days: 30
+          name: WeChatFerry-bin
+          path: WeChatFerry/build/x64/Release
